@@ -13,7 +13,13 @@ class CNUGUSEMserverGUIDlg : public CDialogEx
 {
 // 생성입니다.
 public:
-	CNUGUSEMserverGUIDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
+	CNUGUSEMserverGUIDlg(CWnd* pParent = nullptr)
+		: CDialogEx(IDD_NUGUSEM_SERVERGUI_DIALOG, pParent)
+		, m_strLog(_T(""))
+		, m_flagListenClientThread(true)
+	{
+		m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}	// 표준 생성자입니다.
 
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
@@ -51,6 +57,6 @@ public:
 	LRESULT get_TCPIP_data(WPARAM wParam, LPARAM lParam);
 	BOOL get_m_flagListenClientThread();
 	void PrintImage(CString img_path, CImage& image_instance, CRect& image_rect);
-	
+
 	Server server;
 };

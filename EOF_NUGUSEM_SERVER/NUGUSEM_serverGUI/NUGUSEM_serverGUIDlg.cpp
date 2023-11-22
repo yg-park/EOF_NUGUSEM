@@ -25,7 +25,8 @@ UINT ThreadForListening(LPVOID param)
 
 	while (pMain->get_m_flagListenClientThread())
 	{
-		Sleep(3000); 
+		Sleep(3000);
+		std::cout << "qaws" << std::endl;
 		PostMessage(pMain->m_hWnd, MESSAGE_LISTEN_CLIENT, NULL, NULL);
 	}
 
@@ -70,13 +71,6 @@ END_MESSAGE_MAP()
 // CNUGUSEMserverGUIDlg 대화 상자
 
 
-
-CNUGUSEMserverGUIDlg::CNUGUSEMserverGUIDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_NUGUSEM_SERVERGUI_DIALOG, pParent)
-	, m_strLog(_T(""))
-{
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-}
 
 void CNUGUSEMserverGUIDlg::DoDataExchange(CDataExchange* pDX)
 {

@@ -7,7 +7,7 @@ Server::Server() {
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
     // TCP socket 생성
-    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_HOPOPTS);
 
     // 소켓 주소 설정
     serverAddr.sin_family = AF_INET;
@@ -33,11 +33,14 @@ void Server::run(CString &receieved_string) {
     // 클라이언트 연결 수락
     sockaddr_in clientAddr;
     int clientAddrLen = sizeof(clientAddr);
+    // 문제 1 accept 가 계속 서버와 연결 대기중인것 같음.
     SOCKET clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientAddrLen);
+
 
     // Receive data type header
     DataType dataType;
     int headerBytesRead = recv(clientSocket, reinterpret_cast<char*>(&dataType), sizeof(DataType), 0);
+
 
     if (headerBytesRead != sizeof(DataType)) {
         std::cerr << "Error reading data type header" << std::endl;
