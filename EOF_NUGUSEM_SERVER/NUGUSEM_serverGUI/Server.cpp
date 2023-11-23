@@ -9,12 +9,9 @@ Server::Server() {
 
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-<<<<<<< HEAD
     // TCP socket 생성
     serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_HOPOPTS);
-=======
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
->>>>>>> 8c957fe9a994d9bea8eaf7342d477b619fcb89c7
 
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = INADDR_ANY;
@@ -36,11 +33,8 @@ void Server::run(CString& received_string) {
     // 문제 1 accept 가 계속 서버와 연결 대기중인것 같음.
     SOCKET clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientAddrLen);
 
-<<<<<<< HEAD
 
     // Receive data type header
-=======
->>>>>>> 8c957fe9a994d9bea8eaf7342d477b619fcb89c7
     DataType dataType;
     int headerBytesRead = recv(clientSocket, reinterpret_cast<char*>(&dataType), sizeof(DataType), 0);
 
