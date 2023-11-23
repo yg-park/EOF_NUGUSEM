@@ -1,5 +1,4 @@
-﻿
-// NUGUSEM_serverGUIDlg.cpp: 구현 파일
+﻿// NUGUSEM_serverGUIDlg.cpp: 구현 파일
 //
 
 #include "pch.h"
@@ -17,7 +16,7 @@
 #endif
 
 /* <global scope function... non- CNUGUSEMserverGUIDlg class context>
-  desc: 클라이언트의 송신을 수신하기 위한, listen 역할을 담당하는 작업스레드. 
+  desc: 클라이언트의 송신을 수신하기 위한, listen 역할을 담당하는 작업스레드.
 */
 UINT ThreadForListening(LPVOID param)
 {
@@ -26,14 +25,17 @@ UINT ThreadForListening(LPVOID param)
 	while (pMain->get_m_flagListenClientThread())
 	{
 		Sleep(3000);
-		std::cout << "qaws" << std::endl;
-		PostMessage(pMain->m_hWnd, MESSAGE_LISTEN_CLIENT, NULL, NULL);
+
+		// 비동기 소켓 통신 함수 호출
+		pMain->ListenClientAsync();
+		
+		//메인 쓰레드 에서 소켓 통신 함수 호출
+		//PostMessage(pMain->m_hWnd, MESSAGE_LISTEN_CLIENT, NULL, NULL);
+
 	}
 
 	return 0;
 }
-
-
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
@@ -42,15 +44,15 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// 대화 상자 데이터입니다.
+	// 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
 
-// 구현입니다.
+	// 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -85,7 +87,6 @@ BEGIN_MESSAGE_MAP(CNUGUSEMserverGUIDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_OPEN, &CNUGUSEMserverGUIDlg::OnBnClickedOpen)
 	ON_BN_CLICKED(IDC_CLOSE, &CNUGUSEMserverGUIDlg::OnBnClickedClose)
-	ON_MESSAGE(MESSAGE_LISTEN_CLIENT, &CNUGUSEMserverGUIDlg::get_TCPIP_data) // kenGwon: 사용자정의 메세지 "MESSAGE_LISTEN_CLIENT"
 END_MESSAGE_MAP()
 
 
@@ -122,7 +123,8 @@ BOOL CNUGUSEMserverGUIDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 
-	m_flagListenClientThread = TRUE; // 스레드 
+	m_flagListenClientThread = TRUE;
+	m_socketDataAvailable = false;
 	m_pThread = AfxBeginThread(ThreadForListening, this);
 
 
@@ -150,6 +152,8 @@ void CNUGUSEMserverGUIDlg::OnSysCommand(UINT nID, LPARAM lParam)
 
 void CNUGUSEMserverGUIDlg::OnPaint()
 {
+	CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
+
 	if (IsIconic())
 	{
 		CPaintDC dc(this); // 그리기를 위한 디바이스 컨텍스트입니다.
@@ -170,6 +174,17 @@ void CNUGUSEMserverGUIDlg::OnPaint()
 	else
 	{
 		CDialogEx::OnPaint();
+
+		dc.SetStretchBltMode(COLORONCOLOR); // 이미지를 축소나 확대를 경우 생기는 손실을 보정
+
+		if (!m_cam_face_image.IsNull())
+		{
+			m_cam_face_image.Draw(dc, m_cam_face_rect); // 그림을 Picture Control 크기로 화면에 출력한다.	
+		}
+		if (!m_cam_face_image.IsNull())
+		{
+			m_cam_face_image.Draw(dc, m_cam_face_rect); // 그림을 Picture Control 크기로 화면에 출력한다.
+		}
 	}
 }
 
@@ -183,53 +198,77 @@ HCURSOR CNUGUSEMserverGUIDlg::OnQueryDragIcon()
 
 void CNUGUSEMserverGUIDlg::OnBnClickedOpen()
 {
-	// 여기서 통신 클래스 객채를 통한 send 동작이 들어가야함.
+	// 여기서 통신 클래스 객체를 통한 send 동작이 들어가야함.
 
-	
+
 }
 
 
 void CNUGUSEMserverGUIDlg::OnBnClickedClose()
 {
-	// 여기서 통신 클래스 객채를 통한 send 동작이 들어가야함.
+	// 여기서 통신 클래스 객체를 통한 send 동작이 들어가야함.
 
 
 
 }
 
-LRESULT CNUGUSEMserverGUIDlg::get_TCPIP_data(WPARAM wParam, LPARAM lParam)
+
+// 비동기 소켓 통신 함수 정의
+void CNUGUSEMserverGUIDlg::ListenClientAsync()
 {
-	// 여기서 통신 클래스 객체를 통한 listen 동작이 들어가야함.
-	
-	CString str;  // 문자열을 저장할 변수
+	std::unique_lock<std::mutex> lock(m_socketMutex);
+
+	CString str;
 	server.run(str);
 
-	if (server.get_image_flag())
-	{
-		//picture control 띄우기
-		std::cout << "pic" << std::endl;
-
+	if (server.get_Rflag() == 0) {
+		// 이미지 출력용 png
 		GetDlgItem(IDC_CAM_FACE)->GetWindowRect(m_cam_face_rect);
 		ScreenToClient(m_cam_face_rect);
 		PrintImage(_T("received_image.png"), m_cam_face_image, m_cam_face_rect);
+		std::cout << "Image received" << std::endl;
+		server.set_Rflag(-1);
+		
 
-		server.set_image_flag(false);
+		m_socketDataAvailable = true;
+		m_condition.notify_one();
+		server.sendImageToClient(get_img_path());
 	}
-	else
-	{
-		str += "\r\n";
+	else if (server.get_Rflag() == 1) {
 
-		// 문자열의 길이를 알아냄
+		std::string input = std::string(CT2CA(str));
+		int pos=0;
+		std::string uid = input.substr(0, input.find("@", 0));
+		std::string log = input.substr(input.find("@", 0) + 1, input.length());
+		
+		std::cout << "uid: " << uid << std::endl;
+		std::cout << "log: " << log << std::endl;
+
+		//수신받은 UID로 DB에서 image path select
+		CString img_path;
+		if (DB.get_img_path(uid.c_str(), img_path))
+		{ 
+			set_img_path(img_path);
+		}
+
+
+
+
+
+
+		// Log String 수신 상황
+		log += "\r\n";
 		int nLength = m_controlLog.GetWindowTextLength();
-
-		// 마지막 줄을 선택함
 		m_controlLog.SetSel(nLength, nLength);
+		m_controlLog.ReplaceSel(log.c_str());
 
-		// 선택된 행의 텍스트를 교체
-		m_controlLog.ReplaceSel(str);
+		m_socketDataAvailable = true;
+		m_condition.notify_one();
 	}
-	return 0;
+
+
 }
+
 
 BOOL CNUGUSEMserverGUIDlg::get_m_flagListenClientThread()
 {
@@ -245,4 +284,14 @@ void CNUGUSEMserverGUIDlg::PrintImage(CString img_path, CImage& image_instance, 
 	image_instance.~CImage();
 	image_instance.Load(img_path);
 	InvalidateRect(image_rect, TRUE);
+}
+
+void CNUGUSEMserverGUIDlg::set_img_path(CString img_path)
+{
+	this->m_img_path = img_path;
+}
+
+CString CNUGUSEMserverGUIDlg::get_img_path()
+{
+	return this->m_img_path;
 }

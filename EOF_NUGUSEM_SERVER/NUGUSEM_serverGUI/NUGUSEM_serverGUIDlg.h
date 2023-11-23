@@ -1,17 +1,17 @@
-﻿
-// NUGUSEM_serverGUIDlg.h: 헤더 파일
+﻿// NUGUSEM_serverGUIDlg.h: 헤더 파일
 //
 
 #pragma once
 
 #include "Server.h"
+#include "mariaDB.h"
 
 #define MESSAGE_LISTEN_CLIENT WM_USER + 1 // 사용자 정의 메세지
 
 // CNUGUSEMserverGUIDlg 대화 상자
 class CNUGUSEMserverGUIDlg : public CDialogEx
 {
-// 생성입니다.
+	// 생성입니다.
 public:
 	CNUGUSEMserverGUIDlg(CWnd* pParent = nullptr)
 		: CDialogEx(IDD_NUGUSEM_SERVERGUI_DIALOG, pParent)
@@ -21,16 +21,16 @@ public:
 		m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }	// 표준 생성자입니다.
 
-// 대화 상자 데이터입니다.
+	// 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_NUGUSEM_SERVERGUI_DIALOG };
 #endif
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원입니다.
 
 
-// 구현입니다.
+	// 구현입니다.
 protected:
 	HICON m_hIcon;
 
@@ -51,12 +51,31 @@ private:
 	CString m_strLog;
 	CWinThread* m_pThread;
 
+	// 비동기 소켓 통신을 위한 변수 및 함수 추가
+	std::mutex m_socketMutex;
+	std::condition_variable m_condition;
+	bool m_socketDataAvailable;
+	CString m_img_path;
+
+
+
+
+
 public:
-	afx_msg void OnBnClickedOpen(); 
+	afx_msg void OnBnClickedOpen();
 	afx_msg void OnBnClickedClose();
-	LRESULT get_TCPIP_data(WPARAM wParam, LPARAM lParam);
 	BOOL get_m_flagListenClientThread();
 	void PrintImage(CString img_path, CImage& image_instance, CRect& image_rect);
+<<<<<<< HEAD
 
+=======
+	void set_img_path(CString img_path);
+	CString get_img_path();
+>>>>>>> 8c957fe9a994d9bea8eaf7342d477b619fcb89c7
 	Server server;
+	mariaDB DB;
+
+
+	// 비동기 소켓 통신을 위한 함수
+	void ListenClientAsync();
 };
