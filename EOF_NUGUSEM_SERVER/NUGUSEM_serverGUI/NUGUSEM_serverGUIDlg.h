@@ -66,18 +66,12 @@ public:
 	afx_msg void OnBnClickedClose();
 	BOOL get_m_flagListenClientThread();
 	void PrintImage(CString img_path, CImage& image_instance, CRect& image_rect);
-<<<<<<< HEAD
 
-=======
 	void set_img_path(CString img_path);
 	CString get_img_path();
-<<<<<<< HEAD
->>>>>>> 8c957fe9a994d9bea8eaf7342d477b619fcb89c7
 	Server server;
-=======
 	Server server = Server();
 	Server manager_server = Server(8889);
->>>>>>> d95176bdccca00397e97b6d8a4b46001b17035a8
 	mariaDB DB;
 
 
