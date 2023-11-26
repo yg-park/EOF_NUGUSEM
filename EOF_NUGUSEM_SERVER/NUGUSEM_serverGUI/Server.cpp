@@ -10,7 +10,6 @@ Server::Server() {
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
     // TCP socket »ý¼º
-    serverSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_HOPOPTS);
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 
     serverAddr.sin_family = AF_INET;
