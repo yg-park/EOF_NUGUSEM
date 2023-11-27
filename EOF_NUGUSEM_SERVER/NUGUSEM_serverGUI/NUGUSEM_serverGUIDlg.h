@@ -57,7 +57,6 @@ private:
 	CString m_img_path;
 
 public:
-<<<<<<< HEAD
 	afx_msg void OnBnClickedOpen();
 	afx_msg void OnBnClickedClose();
 	BOOL get_m_flagListenClientThread();
@@ -68,13 +67,11 @@ public:
 	Server server;
 	Server server = Server();
 	Server manager_server = Server(8889);
-=======
 	afx_msg void OnBnClickedAbout();
 
 	Server server = Server();//일반 상황 통신용 포트: 8888
 	Server manager_server = Server(MPORT);//매니저 호출 상황용 포트:8889
 
->>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
 	mariaDB DB;
 
 	// 비동기 소켓 통신을 위한 함수
