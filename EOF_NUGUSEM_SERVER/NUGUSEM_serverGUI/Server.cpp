@@ -11,6 +11,7 @@ Server::Server() {
     image_upload_flag = false;
     WSAStartup(MAKEWORD(2, 2), &wsaData);//Windows 소켓 프로그래밍에서 Winsock 라이브러리를 초기화
 
+    // TCP socket 생성
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 
     serverAddr.sin_family = AF_INET;
@@ -45,12 +46,20 @@ Server::~Server() {
 void Server::run(CString& received_string) {
     sockaddr_in clientAddr;
     int clientAddrLen = sizeof(clientAddr);
+<<<<<<< HEAD
     SOCKET clientSocket = accept(serverSocket, 
         (struct sockaddr*)&clientAddr, &clientAddrLen);
+=======
+    // 문제 1 accept 가 계속 서버와 연결 대기중인것 같음.
+    SOCKET clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &clientAddrLen);
+>>>>>>> ee5be685fee14cf44e607df5b63e19b2d0702249
 
+
+    // Receive data type header
     DataType dataType;
     int headerBytesRead = recv(clientSocket, 
         reinterpret_cast<char*>(&dataType), sizeof(DataType), 0);
+
 
     if (headerBytesRead != sizeof(DataType)) {
         std::cerr << "Error reading data type header" << std::endl;

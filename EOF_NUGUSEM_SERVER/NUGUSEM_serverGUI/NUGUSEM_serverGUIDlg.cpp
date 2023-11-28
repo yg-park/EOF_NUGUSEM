@@ -24,6 +24,7 @@ UINT ThreadForListening(LPVOID param)
 	while (pMain->get_m_flagListenClientThread())
 	{
 		Sleep(1000);
+		// 비동기 소켓 통신 함수 호출
 		pMain->ListenClientAsync();
 	}
 	return 0;
@@ -36,6 +37,7 @@ UINT ListeningForManager(LPVOID param)
 	while (pMain->get_m_flagListenClientThread())
 	{
 		Sleep(1000);
+		// 비동기 소켓 통신 함수 호출		
 		pMain->ListenClientAsync_Manager();
 	}
 	return 0;
@@ -80,13 +82,6 @@ END_MESSAGE_MAP()
 // CNUGUSEMserverGUIDlg 대화 상자
 
 
-
-CNUGUSEMserverGUIDlg::CNUGUSEMserverGUIDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_NUGUSEM_SERVERGUI_DIALOG, pParent)
-	, m_strLog(_T(""))
-{
-	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-}
 
 void CNUGUSEMserverGUIDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -261,7 +256,7 @@ void CNUGUSEMserverGUIDlg::ListenClientAsync()
 	}
 }
 
-// 비동기 소켓 통신 함수 정의
+// 비동기 소켓 통신 함수 정의received_string
 void CNUGUSEMserverGUIDlg::ListenClientAsync_Manager()
 {
 	manager_server.run_manager();
@@ -276,6 +271,12 @@ void CNUGUSEMserverGUIDlg::ListenClientAsync_Manager()
 	}
 	if (manager_server.get_Manager_Req_flag()==1)
 	{
+		//manager_server.set_Manager_Req_flag(0);
+		UINT result = AfxMessageBox(_T("클라이언트로부터 관리자권한 출입문 개방 요청이 발생했습니다.\n개방 여부를 선택해주세요."), MB_YESNO | MB_ICONQUESTION);
+		
+		if (result == IDYES) {
+			// 사용자가 Yes를 선택한 경우에 수행할 작업
+			MessageBox(_T("요청을 승인했습니다.\n출입문을 개방합니다."));
 		std::time_t currentTime;
 		std::time(&currentTime);
 		std::tm localTime;
@@ -312,6 +313,8 @@ void CNUGUSEMserverGUIDlg::ListenClientAsync_Manager()
 			manager_server.set_Manager_Req_flag(2);
 		}
 		else if (result == IDNO) {
+			// 사용자가 No를 선택한 경우에 수행할 작업
+			MessageBox(_T("요청을 거부했습니다."));
 			std::time(&currentTime);
 			localtime_s(&localTime, &currentTime);
 			std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &localTime);

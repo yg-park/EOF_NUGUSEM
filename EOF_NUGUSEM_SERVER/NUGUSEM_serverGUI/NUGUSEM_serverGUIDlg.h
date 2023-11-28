@@ -14,7 +14,13 @@ class CNUGUSEMserverGUIDlg : public CDialogEx
 {
 	// 생성입니다.
 public:
-	CNUGUSEMserverGUIDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
+	CNUGUSEMserverGUIDlg(CWnd* pParent = nullptr)
+		: CDialogEx(IDD_NUGUSEM_SERVERGUI_DIALOG, pParent)
+		, m_strLog(_T(""))
+		, m_flagListenClientThread(true)
+	{
+		m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+}	// 표준 생성자입니다.
 
 	// 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
@@ -51,6 +57,16 @@ private:
 	CString m_img_path;
 
 public:
+	afx_msg void OnBnClickedOpen();
+	afx_msg void OnBnClickedClose();
+	BOOL get_m_flagListenClientThread();
+	void PrintImage(CString img_path, CImage& image_instance, CRect& image_rect);
+
+	void set_img_path(CString img_path);
+	CString get_img_path();
+	Server server;
+	Server server = Server();
+	Server manager_server = Server(8889);
 	afx_msg void OnBnClickedAbout();
 
 	Server server = Server();//일반 상황 통신용 포트: 8888

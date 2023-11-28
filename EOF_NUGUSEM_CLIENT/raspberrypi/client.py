@@ -132,7 +132,15 @@ class ClientCommunication:
                         log = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         send_data = self.uid + "@" + log
                         self.client_socket.sendall(send_data.encode("utf-8"))
+<<<<<<< HEAD
                         time.sleep(0.6) # 우리 로직에서는 img가 write되는 시간을 줘야함
+=======
+<<<<<<< HEAD
+                        time.sleep(0.25) # 우리 로직에서는 img가 write되는 시간을 줘야함
+=======
+                        time.sleep(0.35) # 우리 로직에서는 img가 write되는 시간을 줘야함
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
+>>>>>>> ee5be685fee14cf44e607df5b63e19b2d0702249
                         self.send_data_type(0) # image binary
                         self.send_image_to_server("resources/captured_image.jpg")
                         self.close_connection()
@@ -157,12 +165,16 @@ class ClientCommunication:
     def send_communicate_manager(self):
         try:
             self.connect_to_server()
+<<<<<<< HEAD
+            self.send_data_type(0) # REQUEST
+=======
             self.send_data_type(2) # REQUEST
             
             # time.sleep(0.25) # 우리 로직에서는 img가 write되는 시간을 줘야함
             self.send_data_type(0) # image binary
             self.send_image_to_server("resources/captured_image.jpg")
 
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
         except Exception as e:
             print(f"통신 오류: {e}")
         finally:
@@ -180,9 +192,15 @@ class ClientCommunication:
                 return
             else:
                 ack_type = struct.unpack("I", ack_type_header)[0]
+<<<<<<< HEAD
+                if ack_type == 1:
+                    self.manager_responce_status = 1
+                elif ack_type == 2:
+=======
                 if ack_type == 3: # server mamagerDataType enum
                     self.manager_responce_status = 1
                 elif ack_type == 4: # server mamagerDataType enum
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
                     self.manager_responce_status = 2
                 else:
                     print("오류: 예상치 않은 ACK 유형입니다.")

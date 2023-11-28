@@ -15,6 +15,14 @@ import face_detector
 serialForArduino = serial.Serial('/dev/ttyACM0', 9600)
 socketForRFID = client.ClientCommunication("10.10.15.58", 8888)
 socketForManager = client.ClientCommunication("10.10.15.58", 8889) # 포트 다름. 8889임.
+<<<<<<< HEAD
+=======
+faceDetector = face_detector.FaceDetector()
+<<<<<<< HEAD
+=======
+manager_request_flag = False
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
+>>>>>>> ee5be685fee14cf44e607df5b63e19b2d0702249
 
 
 class WebcamThread(QThread):
@@ -63,6 +71,10 @@ class WebcamThread(QThread):
                 frameQimage = convert_to_qt_format.scaled(640, 480, Qt.KeepAspectRatio)
                 self.change_pixmap_signal.emit(frameQimage)
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
                 if socketForRFID.rcvUidFromRFID_flag:
                     image_filename = "resources/captured_image.jpg"
                     cv2.imwrite(image_filename, frame) # client.py 127번재 라인이 참조하는 실제파일 저장 타이밍
@@ -106,10 +118,13 @@ class WebcamThread(QThread):
                             command = "A0\n" # ex: A0\n
                             serialForArduino.write(command.encode())
 
+<<<<<<< HEAD
+=======
                             # 경고 부저 울리기
                             command = "Z\n"
                             serialForArduino.write(command.encode())
 
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
                             socketForRFID.authentication_log = datetime.now().strftime("%Y-%m-%d %H:%M:%S") + " Reject trial..."
                             socketForRFID.authentication_flag = True
                 
@@ -158,8 +173,15 @@ class ManagerCommThread(QThread):
 
     def run(self):
         while True:
+<<<<<<< HEAD
             if self.request_status == 1:
+=======
+            if self.request_flag == 1:
+<<<<<<< HEAD
+=======
+>>>>>>> ee5be685fee14cf44e607df5b63e19b2d0702249
                 time.sleep(0.5)
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
                 socketForManager.send_communicate_manager()
                 self.request_status = 2
 
@@ -176,6 +198,12 @@ class ManagerCommThread(QThread):
                         self.update_information.emit(self.information)
 
                     elif socketForManager.manager_responce_status == 2 :
+<<<<<<< HEAD
+                        # 서보모터 문 열기
+                        command = "A0\n" # ex: A180\n
+                        serialForArduino.write(command.encode())
+                        socketForManager.manager_responce_status = 0
+=======
                         # 서보모터 문 닫기
                         command = "A0\n" # ex: A180\n
                         serialForArduino.write(command.encode())
@@ -183,6 +211,7 @@ class ManagerCommThread(QThread):
                         # 경고 부저 울리기
                         command = "Z\n"
                         serialForArduino.write(command.encode())
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
                         # PyQt GUI 갱신하기
                         self.information = "관리자가 요청을 거부했습니다..."
                         self.update_information.emit(self.information)
@@ -214,17 +243,46 @@ class ArduinoThread(QThread):
             if data and data.startswith("U"):
                 uid_ = data[1:] # 헤더 "U"를 제외한 부분이 UID
                 socketForRFID.uid = uid_
+<<<<<<< HEAD
+                socketForRFID.arduino_rfid_flag = True 
+
+            # 관리실 요청 버튼을 트리거로 발동하는 서버통신에 관여하는 if-else문
+=======
                 socketForRFID.arduino_rfid_flag = True
 
+<<<<<<< HEAD
             # 관리자 호출버튼을 트리거로 발동하는 서버통신
             if data and data.startswith("T"):
                 print("버튼 눌렸다")
                 self.manager_call_trigger.emit(True) # True: 트리거가 발생했다 / False: IDLE상태
+=======
+            # PyQt5 GUI의 관리실 요청 버튼을 트리거로 발동하는 서버통신에 관여하는 if-else문
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
+            if socketForManager.manager_responce_status == 1:
+                # 서보모터 문 열기
+                command = "A180\n" # ex: A180\n
+                serialForArduino.write(command.encode())
+                socketForManager.manager_responce_status = 0 # 
+            elif socketForManager.manager_responce_status == 2:
+<<<<<<< HEAD
+                # 서보모터 문 열기
+=======
+                # 서보모터 문 닫기
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
+                command = "A0\n" # ex: A180\n
+                serialForArduino.write(command.encode())
+                socketForManager.manager_responce_status = 0
+            else :
+                pass
+>>>>>>> ee5be685fee14cf44e607df5b63e19b2d0702249
 
 
 class App(QMainWindow):
+<<<<<<< HEAD
+=======
     global arduino_manager_call_flag
 
+>>>>>>> 5b5f7dfc5d4ec527bffeb9f296f76814f379d505
     def __init__(self):
         super().__init__()
 
