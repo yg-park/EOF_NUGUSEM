@@ -1,5 +1,4 @@
 import cv2
-import time
 from datetime import datetime
 import serial
 import json
@@ -162,8 +161,11 @@ class ManagerCommThread(QThread):
     def run(self):
         while True:
             if self.request_status == 1:
+<<<<<<< HEAD
             if self.request_flag == 1:
                 time.sleep(0.5)
+=======
+>>>>>>> d7281c5de5dbacf60d07e95d655a9f24b0ebd482
                 socketForManager.send_communicate_manager()
                 self.request_status = 2
 

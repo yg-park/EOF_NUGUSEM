@@ -132,9 +132,18 @@ class ClientCommunication:
                         log = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         send_data = self.uid + "@" + log
                         self.client_socket.sendall(send_data.encode("utf-8"))
+<<<<<<< HEAD
                         time.sleep(0.6) # 우리 로직에서는 img가 write되는 시간을 줘야함
                         time.sleep(0.25) # 우리 로직에서는 img가 write되는 시간을 줘야함
                         time.sleep(0.35) # 우리 로직에서는 img가 write되는 시간을 줘야함
+=======
+
+                        timeout = time.time() + 1 # 1초동안 묶어두기
+                        while True:
+                            if time.time() > timeout:
+                                break
+                            
+>>>>>>> d7281c5de5dbacf60d07e95d655a9f24b0ebd482
                         self.send_data_type(0) # image binary
                         self.send_image_to_server("resources/captured_image.jpg")
                         self.close_connection()
@@ -162,7 +171,11 @@ class ClientCommunication:
             self.send_data_type(0) # REQUEST
             self.send_data_type(2) # REQUEST
             
-            # time.sleep(0.25) # 우리 로직에서는 img가 write되는 시간을 줘야함
+            timeout = time.time() + 1 # 1초동안 묶어두기
+            while True:
+                if time.time() > timeout:
+                    break
+
             self.send_data_type(0) # image binary
             self.send_image_to_server("resources/captured_image.jpg")
 
