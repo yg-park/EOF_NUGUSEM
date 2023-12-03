@@ -44,7 +44,7 @@ protected:
 
 private:
 	BOOL m_flagListenClientThread;//MFC Dlg init이 끝났을 때, 통신 쓰레드 시작용
-	
+
 	CRect m_cam_face_rect;//픽처컨트롤
 	CImage m_cam_face_image;//픽처컨트롤
 
@@ -57,16 +57,6 @@ private:
 	CString m_img_path;
 
 public:
-	afx_msg void OnBnClickedOpen();
-	afx_msg void OnBnClickedClose();
-	BOOL get_m_flagListenClientThread();
-	void PrintImage(CString img_path, CImage& image_instance, CRect& image_rect);
-
-	void set_img_path(CString img_path);
-	CString get_img_path();
-	Server server;
-	Server server = Server();
-	Server manager_server = Server(8889);
 	afx_msg void OnBnClickedAbout();
 
 	Server server = Server();//일반 상황 통신용 포트: 8888
